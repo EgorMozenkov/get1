@@ -2,11 +2,10 @@ import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BCM)
 
-dac_bits = [24, 22, 23, 27, 17, 25, 12, 16]
+dac_bits = [22, 27, 17, 26, 25, 21, 20, 16]
 
 for pin in dac_bits:
-    GPIO.setup(pin, GPIO.OUT)
-    GPIO.output(pin, 0)
+    GPIO.setup(pin, GPIO.OUT, initial=0)
 
 dynamic_range = 3.3
 
