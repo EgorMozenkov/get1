@@ -19,22 +19,18 @@ class R2R_DAC:
         for i in range(8):
             GPIO.output(self.gpio_bits[i], bits[i])
         if self.verbose:
-            print(f"Установлено число: {number}, Двоичное: {bin(number)[2:].zfill(8)}")
+            print(f"Число на вход ЦАП: {number}, биты: {bits}")
     
     def set_voltage(self, voltage):
         if not (0.0 <= voltage <= self.dynamic_range):
             print(f"Напряжение выходит за динамический диапазон ЦАП (0.00 - {self.dynamic_range:.2f} В)")
-            print("Устанавливаем 0.0 В")
-            number = 0
-        else:
-            number = int(voltage / self.dynamic_range * 255)
+            return
+        number = int(voltage / self.dynamic_range * 255)
         self.set_number(number)
-        if self.verbose:
-            print(f"Напряжение: {voltage:.2f} В -> Число: {number}")
 
 if __name__ == "__main__":
     try:
-        dac = R2R_DAC([16, 20, 21, 25, 26, 17, 27, 22], 3.183, True)
+        dac = R2R_DAC([22, 27, 17, 26, 25, 21, 20, 16], 3.18, True)
         
         while True:
             try:
