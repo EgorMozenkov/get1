@@ -25,42 +25,35 @@ class R2R_ADC:
         bits = [int(bit) for bit in bin(number)[2:].zfill(8)]
         for i in range(8):
             GPIO.output(self.bits_gpio[i], bits[i])
-        if self.verbose:
-            print(f"  ЦАП: число {number}, биты {bits}")
     
     def sequential_counting_adc(self):
         for number in range(256):
             self.number_to_dac(number)
             time.sleep(self.compare_time)
             
-            comp_value = GPIO.input(self.comp_gpio)
-            if self.verbose:
-                print(f"    число={number}, comp={comp_value}")
-            
-            if comp_value == 1: 
+            if GPIO.input(self.comp_gpio) == 0:
                 return number
-        
         return 255
     
     def get_sc_voltage(self):
         number = self.sequential_counting_adc()
         voltage = (number / 255) * self.dynamic_range
         if self.verbose:
-            print(f"Измерено: число={number}, напряжение={voltage:.3f} В")
+            print(f"Число: {number}, Напряжение: {voltage:.3f} В")
         return voltage
 
 if __name__ == "__main__":
-    DYNAMIC_RANGE = 3.3 
+    DYNAMIC_RANGE = 3.3  # измерьте мультиметром и замените
     
     try:
-        adc = R2R_ADC(DYNAMIC_RANGE, compare_time=0.01, verbose=True)
+        adc = R2R_ADC(DYNAMIC_RANGE, compare_time=0.01, verbose=False)
         
         while True:
             voltage = adc.get_sc_voltage()
-            print(f"Напряжение на потенциометре: {voltage:.3f} В")
-            time.sleep(0.5) 
+            print(f"Напряжение: {voltage:.3f} В")
+            time.sleep(0.2)
             
     except KeyboardInterrupt:
-        print("\nОстановка")
+        print("\nИзмерения остановлены")
     finally:
         adc.deinit()
